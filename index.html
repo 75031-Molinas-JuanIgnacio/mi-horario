@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Estudio & Productividad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #181818;
+    --bg4: #1e1e1e;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.14);
+    --text: #e8e4dc;
+    --text-muted: #7a7670;
+    --text-dim: #4a4744;
+    --accent-blue: #4a9eff;
+    --accent-blue-dim: rgba(74,158,255,0.12);
+    --accent-green: #3ecf8e;
+    --accent-green-dim: rgba(62,207,142,0.12);
+    --accent-amber: #f5a623;
+    --accent-amber-dim: rgba(245,166,35,0.12);
+    --accent-coral: #ff6b6b;
+    --accent-coral-dim: rgba(255,107,107,0.12);
+    --accent-purple: #a78bfa;
+    --accent-purple-dim: rgba(167,139,250,0.12);
+    --accent-pink: #f472b6;
+    --accent-pink-dim: rgba(244,114,182,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ---- NOISE TEXTURE overlay ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  .nav-logo span { color: var(--accent-blue); }
+
+  .nav-links {
+    display: flex;
+    gap: 2px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    position: relative;
+    padding: 140px 2rem 100px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse at center top, rgba(74,158,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-blue);
+    border: 1px solid rgba(74,158,255,0.3);
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 6vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent-blue);
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto 44px;
+    font-weight: 300;
+    line-height: 1.75;
+  }
+
+  .hero-pills {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border-bright);
+    color: var(--text-muted);
+    background: var(--bg2);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .pill:hover {
+    color: var(--text);
+    border-color: rgba(255,255,255,0.25);
+    background: var(--bg3);
+    transform: translateY(-1px);
+  }
+
+  .pill-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ---- MAIN LAYOUT ---- */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 100px;
+  }
+
+  /* ---- SECTION HEADER ---- */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  section { margin-bottom: 96px; scroll-margin-top: 72px; }
+
+  /* ---- CARDS ---- */
+  .card-grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    nav .nav-links { display: none; }
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: border-color 0.25s, transform 0.25s, background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+    background: var(--bg3);
+  }
+
+  .card-accent-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+
+  .card-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .card p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: gap 0.2s;
+  }
+
+  .card-link:hover { gap: 10px; }
+
+  /* ---- FEATURED CARD ---- */
+  .card-featured {
+    border-color: rgba(74,158,255,0.25);
+    background: linear-gradient(135deg, rgba(74,158,255,0.06) 0%, var(--bg2) 60%);
+  }
+
+  /* ---- METHOD CARDS (big) ---- */
+  .method-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 16px;
+    transition: border-color 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .method-card:hover { border-color: var(--border-bright); }
+
+  .method-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 80px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 16px;
+    opacity: 0.07;
+    position: absolute;
+    top: 16px; right: 24px;
+    letter-spacing: -0.05em;
+  }
+
+  .method-steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .method-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .step-bullet {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-content { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+  .step-content strong { color: var(--text); font-weight: 500; }
+
+  /* ---- HIGHLIGHT BOX ---- */
+  .highlight-box {
+    border-radius: 14px;
+    padding: 20px 24px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    border: 1px solid;
+    margin-top: 12px;
+  }
+
+  .highlight-box strong { display: block; font-weight: 600; margin-bottom: 4px; font-family: 'Syne', sans-serif; }
+
+  /* ---- APP CARDS ---- */
+  .app-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: all 0.25s;
+  }
+
+  .app-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+
+  .app-logo {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .app-info h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .app-info p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+  /* ---- YOUTUBE CARDS ---- */
+  .yt-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+
+  .yt-card:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+
+  .yt-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .yt-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .yt-card p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ---- PROG ROADMAP ---- */
+  .roadmap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .roadmap-header {
+    padding: 28px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .roadmap-phase {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0;
+  }
+
+  .roadmap-timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .timeline-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .timeline-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+    margin: 8px 0;
+    min-height: 40px;
+  }
+
+  .roadmap-content { padding: 32px; border-bottom: 1px solid var(--border); }
+  .roadmap-content:last-child { border-bottom: none; }
+
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .roadmap-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .roadmap-content p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+  .tag {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: var(--bg3);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ---- LANG OPTIONS ---- */
+  .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+
+  .lang-option {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    transition: all 0.2s;
+  }
+
+  .lang-option:hover { border-color: var(--border-bright); }
+  .lang-option.recommended { border-color: rgba(62,207,142,0.3); }
+
+  .lang-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .lang-option p { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 2rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  footer span { color: var(--text-muted); }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag { animation: fadeUp 0.5s ease both; }
+  .hero h1 { animation: fadeUp 0.5s 0.1s ease both; }
+  .hero p { animation: fadeUp 0.5s 0.2s ease both; }
+  .hero-pills { animation: fadeUp 0.5s 0.3s ease both; }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 64px 0;
+  }
+
+  /* ---- SURVIVAL SECTION ---- */
+  .survival-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .survival-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: all 0.2s;
+  }
+
+  .survival-item:hover {
+    border-color: var(--border-bright);
+    background: var(--bg3);
+  }
+
+  .survival-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  .survival-item h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .survival-item p { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">estudio<span>.</span>pro</div>
+  <ul class="nav-links">
+    <li><a href="#semana">Semana</a></li>
+    <li><a href="#metodos">Métodos</a></li>
+    <li><a href="#apps">Apps</a></li>
+    <li><a href="#youtube">YouTube</a></li>
+    <li><a href="#programacion">Programación</a></li>
+    <li><a href="#supervivencia">Supervivencia</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">Sistema de productividad</div>
+  <h1>Estudiá<br><em>más inteligente</em>,<br>no más tiempo.</h1>
+  <p>Métodos probados de Deep Work, herramientas gratuitas, recursos en español y un plan para aprender programación sin sacrificar el rendimiento facultativo.</p>
+  <div class="hero-pills">
+    <a href="#semana" class="pill"><span class="pill-dot" style="background:#3ecf8e"></span>Horario semanal</a>
+    <a href="#metodos" class="pill"><span class="pill-dot" style="background:#4a9eff"></span>Métodos de estudio</a>
+    <a href="#apps" class="pill"><span class="pill-dot" style="background:#3ecf8e"></span>Apps gratuitas</a>
+    <a href="#youtube" class="pill"><span class="pill-dot" style="background:#f5a623"></span>YouTube en español</a>
+    <a href="#programacion" class="pill"><span class="pill-dot" style="background:#a78bfa"></span>Aprender a programar</a>
+    <a href="#supervivencia" class="pill"><span class="pill-dot" style="background:#ff6b6b"></span>Supervivencia martes</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- SECCIÓN 0: HORARIO SEMANAL -->
+  <section id="semana" style="scroll-margin-top:72px; margin-bottom:96px;">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Rutina Semanal</div>
+        <div class="section-title">Horario semanal completo<br>Lunes → Domingo</div>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:24px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text)">#14h</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">Deep Work / semana</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent-green)">4</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">días de GYM</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent-amber)">6</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">bloques para el Final</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent-pink)">2h</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">programación / semana</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent-blue)">38</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">sesiones hasta el 23/6</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#3ecf8e;display:inline-block;flex-shrink:0"></span>Gym / entrenamiento</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#4a9eff;display:inline-block;flex-shrink:0"></span>Deep Work — materia cursada</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#f5a623;display:inline-block;flex-shrink:0"></span>Deep Work — Examen final</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#a78bfa;display:inline-block;flex-shrink:0"></span>Cursado facultad</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#ff6b6b;display:inline-block;flex-shrink:0"></span>Viaje / tránsito</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#f472b6;display:inline-block;flex-shrink:0"></span>Programación</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:#333;border:1px solid #444;display:inline-block;flex-shrink:0"></span>Buffer / descanso</div>
+    </div>
+
+    <!-- Weekly grid -->
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:start">
+
+      <!-- ===== LUNES ===== -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Lunes</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">DSI + GYM</div>
+        </div>
+        <!-- bloque -->
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">06:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Despertar + rutina</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;line-height:1.4">Actividad personal 1h</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(62,207,142,0.08);border-left:2px solid #3ecf8e">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#3ecf8e">07:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#3ecf8e;margin-top:2px;line-height:1.4">GYM</div>
+          <div style="font-size:10.5px;color:#1D9E75;margin-top:2px">1h 30 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">09:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Ducha + desayuno</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">~45 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(245,166,35,0.08);border-left:2px solid #f5a623">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f5a623">09:45</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f5a623;margin-top:2px;line-height:1.4">Estudiar - Final SSL #1</div>
+          <div style="font-size:10.5px;color:#854F0B;margin-top:2px">90 min intensos</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">11:15</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Descanso activo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">15 min caminata</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(245,166,35,0.08);border-left:2px solid #f5a623">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f5a623">11:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f5a623;margin-top:2px;line-height:1.4">Estudiar para Final SSL #2</div>
+          <div style="font-size:10.5px;color:#854F0B;margin-top:2px">90 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">13:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Almuerzo + descanso</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">~45min, siesta si hace falta</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(245,166,35,0.08);border-left:2px solid #f5a623">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f5a623">14:00 a 15:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f5a623;margin-top:2px;line-height:1.4">Estudiar para Final SSL #3</div>
+          <div style="font-size:10.5px;color:#854F0B;margin-top:2px">60 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(255,107,107,0.08);border-left:2px solid #ff6b6b">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#ff6b6b">15:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#ff6b6b;margin-top:2px;line-height:1.4">Salida a facultad</div>
+          <div style="font-size:10.5px;color:#993C1D;margin-top:2px">En viaje: repaso DSI</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(167,139,250,0.08);border-left:2px solid #a78bfa">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#a78bfa">17:45</div>
+          <div style="font-size:11.5px;font-weight:500;color:#a78bfa;margin-top:2px;line-height:1.4">Cursado DSI</div>
+          <div style="font-size:10.5px;color:#534AB7;margin-top:2px">hasta 20:00</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(255,107,107,0.08);border-left:2px solid #ff6b6b">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#ff6b6b">20:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#ff6b6b;margin-top:2px;line-height:1.4">Regreso a casa</div>
+          <div style="font-size:10.5px;color:#993C1D;margin-top:2px">Llega 21:30</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">21:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Cena + cierre = Descanso</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Sin estudio. Recuperar.</div>
+        </div>
+      </div>
+
+      <!-- ===== MARTES ===== -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Martes</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">AM2 + BDD</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">06:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Despertar</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Día pesado → no gym</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">06:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Desayuno + prep</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Salida temprana</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(167,139,250,0.08);border-left:2px solid #a78bfa">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#a78bfa">08:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#a78bfa;margin-top:2px;line-height:1.4">Cursado AM2</div>
+          <div style="font-size:10.5px;color:#534AB7;margin-top:2px">hasta 09:30</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(74,158,255,0.08);border-left:2px solid #4a9eff">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a9eff">09:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#4a9eff;margin-top:2px;line-height:1.4">Estudiar — BDD o DSI</div>
+          <div style="font-size:10.5px;color:#185FA5;margin-top:2px">En facultad · 90 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">13:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Almuerzo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Siesta 45 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(74,158,255,0.08);border-left:2px solid #4a9eff">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a9eff">14:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#4a9eff;margin-top:2px;line-height:1.4">Estudiar — AM2</div>
+          <div style="font-size:10.5px;color:#185FA5;margin-top:2px">Repaso clase de hoy · 90 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">15:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Buffer libre</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">No forzar estudio</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(167,139,250,0.08);border-left:2px solid #a78bfa">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#a78bfa">19:55</div>
+          <div style="font-size:11.5px;font-weight:500;color:#a78bfa;margin-top:2px;line-height:1.4">Cursado BDD</div>
+          <div style="font-size:10.5px;color:#534AB7;margin-top:2px">hasta 23:00</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#ff6b6b">23:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#ff6b6b;margin-top:2px;line-height:1.4">Regreso (llega 00:30)</div>
+          <div style="font-size:10.5px;color:#993C1D;margin-top:2px">Sin estudio. Podcast.</div>
+        </div>
+      </div>
+
+      <!-- ===== MIÉRCOLES ===== -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Miércoles</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Cursado doble</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">06:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Despertar</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Salida más tarde</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(62,207,142,0.08);border-left:2px solid #3ecf8e">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#3ecf8e">07:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#3ecf8e;margin-top:2px;line-height:1.4">GYM</div>
+          <div style="font-size:10.5px;color:#1D9E75;margin-top:2px">1h 30 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">09:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Ducha + desayuno</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">35 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(255,107,107,0.08);border-left:2px solid #ff6b6b">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#ff6b6b">10:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#ff6b6b;margin-top:2px;line-height:1.4">Viaje a facultad</div>
+          <div style="font-size:10.5px;color:#993C1D;margin-top:2px">Tarjetas de repaso</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(167,139,250,0.08);border-left:2px solid #a78bfa">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#a78bfa">11:20</div>
+          <div style="font-size:11.5px;font-weight:500;color:#a78bfa;margin-top:2px;line-height:1.4">Cursado</div>
+          <div style="font-size:10.5px;color:#534AB7;margin-top:2px">hasta 14:00</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">14:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Almuerzo en facultad</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Descanso — no estudiar</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(74,158,255,0.08);border-left:2px solid #4a9eff">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a9eff">15:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#4a9eff;margin-top:2px;line-height:1.4">Repaso de clase DSI y BDD</div>
+          <div style="font-size:10.5px;color:#185FA5;margin-top:2px">60–90 min en facultad</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(167,139,250,0.08);border-left:2px solid #a78bfa">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#a78bfa">17:45</div>
+          <div style="font-size:11.5px;font-weight:500;color:#a78bfa;margin-top:2px;line-height:1.4">Cursado de DSI y desp BDD</div>
+          <div style="font-size:10.5px;color:#534AB7;margin-top:2px">hasta 23:00</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">23:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Cierre + Cena = Descanso</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Sin estudio. Día muy cargado.</div>
+        </div>
+      </div>
+
+      <!-- ===== JUEVES ===== -->
+      <div style="background:var(--bg2);border:1px solid rgba(74,158,255,0.2);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border);background:rgba(74,158,255,0.05)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Jueves</div>
+          <div style="font-size:11px;color:var(--accent-blue);margin-top:2px">Deep Work principal ★</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">07:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Despertar tranquilo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Sin alarma rígida</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(62,207,142,0.08);border-left:2px solid #3ecf8e">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#3ecf8e">07:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#3ecf8e;margin-top:2px;line-height:1.4">GYM</div>
+          <div style="font-size:10.5px;color:#1D9E75;margin-top:2px">1h 30 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">09:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Ducha + desayuno</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">45 min con calma</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(245,166,35,0.08);border-left:2px solid #f5a623">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f5a623">09:45</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f5a623;margin-top:2px;line-height:1.4">Estudiar para Final SSL #4</div>
+          <div style="font-size:10.5px;color:#854F0B;margin-top:2px">90 min — máxima prioridad</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">11:15</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Descanso activo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Caminata / café 15 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(245,166,35,0.08);border-left:2px solid #f5a623">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f5a623">11:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f5a623;margin-top:2px;line-height:1.4">Estudiar para Final SSL #5</div>
+          <div style="font-size:10.5px;color:#854F0B;margin-top:2px">90 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">13:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Almuerzo largo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Descanso real 1.5h</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(74,158,255,0.08);border-left:2px solid #4a9eff">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a9eff">14:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#4a9eff;margin-top:2px;line-height:1.4">Repaso — Materias cursadas</div>
+          <div style="font-size:10.5px;color:#185FA5;margin-top:2px">DSI / BDD / AM2 · 90 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(244,114,182,0.08);border-left:2px solid #f472b6">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f472b6">16:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f472b6;margin-top:2px;line-height:1.4">Programación OOP</div>
+          <div style="font-size:10.5px;color:#993556;margin-top:2px">60 min — C# o Python</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">17:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Buffer imprevisto</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Si no hay nada → relax</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">18:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Actividades sociales</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Tiempo personal libre</div>
+        </div>
+      </div>
+
+      <!-- ===== VIERNES ===== -->
+      <div style="background:var(--bg2);border:1px solid rgba(74,158,255,0.15);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border);background:rgba(74,158,255,0.04)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Viernes</div>
+          <div style="font-size:11px;color:var(--accent-blue);margin-top:2px">Consolidación</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">07:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Despertar flexible</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Sin alarma obligatoria</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(62,207,142,0.08);border-left:2px solid #3ecf8e">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#3ecf8e">08:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#3ecf8e;margin-top:2px;line-height:1.4">GYM</div>
+          <div style="font-size:10.5px;color:#1D9E75;margin-top:2px">1h 30 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">09:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Ducha + desayuno</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Tranquilo 45 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(245,166,35,0.08);border-left:2px solid #f5a623">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f5a623">10:15</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f5a623;margin-top:2px;line-height:1.4">Estudiar para Final SSL #6</div>
+          <div style="font-size:10.5px;color:#854F0B;margin-top:2px">90 min — última bala semanal</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">11:45</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Descanso</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">15 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(74,158,255,0.08);border-left:2px solid #4a9eff">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a9eff">12:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#4a9eff;margin-top:2px;line-height:1.4">Repaso semanal de materias</div>
+          <div style="font-size:10.5px;color:#185FA5;margin-top:2px">Revisar todo lo aprendido AM2/BDD/DSI/SSL [90 min]</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">13:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Almuerzo largo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Cierre de semana académica</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(244,114,182,0.08);border-left:2px solid #f472b6">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#f472b6">15:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#f472b6;margin-top:2px;line-height:1.4">Programación OOP</div>
+          <div style="font-size:10.5px;color:#993556;margin-top:2px">60 min — práctica / proyecto</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">16:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Buffer total</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Imprevistos / recupero</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">17:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Tarde libre</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Desconexión total</div>
+        </div>
+      </div>
+
+      <!-- ===== SÁBADO ===== -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Sábado</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Recupero + opcional</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">08:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Despertar libre</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Sin alarma</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(62,207,142,0.06);border-left:2px solid rgba(62,207,142,0.4)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#3ecf8e">09:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:#3ecf8e;margin-top:2px;line-height:1.4">Running (opcional)</div>
+          <div style="font-size:10.5px;color:#1D9E75;margin-top:2px">30–60 min según energía</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">10:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Desayuno tranquilo</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">No estructurar</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">11:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Repaso liviano</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Flashcards 30 min máx.</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">12:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Tarde libre</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Social / hobbies / descanso</div>
+        </div>
+      </div>
+
+      <!-- ===== DOMINGO ===== -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+        <div style="padding:12px 12px 10px;border-bottom:1px solid var(--border)">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text)">Domingo</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Recarga + planificación</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">11:00 a 12:00hs</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Misa</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">1 hora</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">14:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Almuerzo familiar</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Sin estudio</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">15:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Revisión semanal</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">30 min — planning lunes</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">18:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Preparo mochila / agenda</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Repaso tarjetas 20 min</div>
+        </div>
+        <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">19:30</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Tarde libre</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Descanso completo</div>
+        </div>
+        <div style="padding:8px 10px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)">22:00</div>
+          <div style="font-size:11.5px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.4">Dormir temprano</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px">Preparar la semana</div>
+        </div>
+      </div>
+
+    </div><!-- end weekly grid -->
+
+    <!-- Summary callout -->
+    <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:16px 20px">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:#f5a623;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Bloques Examen Final</div>
+        <div style="font-size:13.5px;color:var(--text-muted);line-height:1.7">6 bloques de 90 min semanales — Lun #1+#2, Mié #3, Jue #4+#5, Vie #6. Total: <strong style="color:var(--text)">9 horas de Deep Work puro</strong> por semana dedicadas al Final.</div>
+      </div>
+      <div style="background:rgba(244,114,182,0.07);border:1px solid rgba(244,114,182,0.2);border-radius:12px;padding:16px 20px">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:#f472b6;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Programación</div>
+        <div style="font-size:13.5px;color:var(--text-muted);line-height:1.7">Jue 16:30 y Vie 15:00 — <strong style="color:var(--text)">2 horas semanales consistentes</strong>. Suficiente para dominar un lenguaje en 4–6 meses sin sacrificar el examen final.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 1: MÉTODOS -->
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">01 — Técnicas</div>
+        <div class="section-title">Métodos de estudio<br>de alto rendimiento</div>
+      </div>
+    </div>
+
+    <!-- Deep Work — FEATURED -->
+    <div class="method-card" style="margin-bottom:16px; border-color: rgba(74,158,255,0.2);">
+      <div class="card-accent-line" style="background: var(--accent-blue)"></div>
+      <div class="method-number">1</div>
+      <div>
+        <div class="card-badge" style="background:rgba(74,158,255,0.12);color:var(--accent-blue)">Principal · Cal Newport</div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:12px">Deep Work</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.75;margin-bottom:16px">Bloques de <strong style="color:var(--text)">90 minutos ininterrumpidos</strong>, teléfono en modo avión, un único tema por bloque. Al terminar: 15 minutos de revisión activa de lo que estudiaste. Siempre usa el mismo lugar de estudio para condicionar al cerebro.</p>
+        <div class="highlight-box" style="background:rgba(74,158,255,0.08);border-color:rgba(74,158,255,0.2);color:var(--accent-blue)">
+          <strong>Ritual de inicio (2 minutos)</strong>
+          Antes de empezar: escribí en papel qué vas a lograr en esos 90 min. Al terminar: escribí qué lograste. Este ritual dobla la calidad del bloque.
+        </div>
+      </div>
+      <div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em">Cómo aplicarlo</p>
+        <ul class="method-steps">
+          <li class="method-step">
+            <div class="step-bullet" style="background:rgba(74,158,255,0.15);color:var(--accent-blue)">1</div>
+            <div class="step-content"><strong>Elegí un tema único</strong> para el bloque. Sin multitasking.</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:rgba(74,158,255,0.15);color:var(--accent-blue)">2</div>
+            <div class="step-content"><strong>Eliminá distracciones</strong> — modo avión, Forest app activado.</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:rgba(74,158,255,0.15);color:var(--accent-blue)">3</div>
+            <div class="step-content"><strong>90 min de trabajo</strong> sin interrupciones ni redes sociales.</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:rgba(74,158,255,0.15);color:var(--accent-blue)">4</div>
+            <div class="step-content"><strong>15 min de descanso activo</strong> — caminata, agua, aire fresco.</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:rgba(74,158,255,0.15);color:var(--accent-blue)">5</div>
+            <div class="step-content"><strong>Máximo 3 bloques por día</strong>. Calidad > cantidad.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card-grid grid-3">
+
+      <!-- Feynman -->
+      <div class="card">
+        <div class="card-accent-line" style="background:var(--accent-green)"></div>
+        <div class="card-badge" style="background:var(--accent-green-dim);color:var(--accent-green)">Comprensión</div>
+        <h3>Método Feynman</h3>
+        <p>Después de estudiar un concepto, explicalo en papel como si se lo enseñaras a alguien que no sabe nada. Los vacíos que aparecen al explicar son exactamente lo que no entendiste.</p>
+        <ul class="method-steps" style="margin-top:14px">
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-green-dim);color:var(--accent-green);font-size:10px">1</div>
+            <div class="step-content" style="font-size:13px">Estudiá el concepto</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-green-dim);color:var(--accent-green);font-size:10px">2</div>
+            <div class="step-content" style="font-size:13px">Explicalo en papel sin mirar</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-green-dim);color:var(--accent-green);font-size:10px">3</div>
+            <div class="step-content" style="font-size:13px">Identificá los vacíos</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-green-dim);color:var(--accent-green);font-size:10px">4</div>
+            <div class="step-content" style="font-size:13px">Volvé al libro solo para lo que falló</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Repetición espaciada -->
+      <div class="card">
+        <div class="card-accent-line" style="background:var(--accent-amber)"></div>
+        <div class="card-badge" style="background:var(--accent-amber-dim);color:var(--accent-amber)">Memoria a largo plazo</div>
+        <h3>Repetición espaciada</h3>
+        <p>Crear flashcards de fórmulas, definiciones y conceptos. El algoritmo decide cuándo repasarlas según la curva del olvido. 15–20 minutos diarios de Anki = retención de largo plazo garantizada.</p>
+        <div class="highlight-box" style="margin-top:14px;background:var(--accent-amber-dim);border-color:rgba(245,166,35,0.2);color:var(--accent-amber)">
+          <strong>Regla de oro</strong>
+          Una tarjeta = una idea. No cargues una tarjeta con 3 conceptos distintos.
+        </div>
+      </div>
+
+      <!-- SQ3R -->
+      <div class="card">
+        <div class="card-accent-line" style="background:var(--accent-purple)"></div>
+        <div class="card-badge" style="background:var(--accent-purple-dim);color:var(--accent-purple)">Lectura activa</div>
+        <h3>Método SQ3R</h3>
+        <p>Para libros de texto y apuntes técnicos. No leas de corrido — procesá en capas.</p>
+        <ul class="method-steps" style="margin-top:14px">
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-purple-dim);color:var(--accent-purple);font-size:10px">S</div>
+            <div class="step-content" style="font-size:13px"><strong>Survey</strong> — Ojear sin leer en detalle</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-purple-dim);color:var(--accent-purple);font-size:10px">Q</div>
+            <div class="step-content" style="font-size:13px"><strong>Question</strong> — Formular preguntas</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-purple-dim);color:var(--accent-purple);font-size:10px">R</div>
+            <div class="step-content" style="font-size:13px"><strong>Read</strong> — Leer activamente</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-purple-dim);color:var(--accent-purple);font-size:10px">R</div>
+            <div class="step-content" style="font-size:13px"><strong>Recite</strong> — Repetir sin mirar</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-purple-dim);color:var(--accent-purple);font-size:10px">R</div>
+            <div class="step-content" style="font-size:13px"><strong>Review</strong> — Revisar lo aprendido</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pomodoro adaptada -->
+      <div class="card">
+        <div class="card-accent-line" style="background:var(--accent-coral)"></div>
+        <div class="card-badge" style="background:var(--accent-coral-dim);color:var(--accent-coral)">Anti-procrastinación</div>
+        <h3>Pomodoro adaptado</h3>
+        <p>Para arrancar cuando no tenés ganas: <strong style="color:var(--text)">25 min sin negociar</strong>. Si al terminar querés seguir, pasás al bloque de 90 min. Sirve para romper la inercia inicial, no para reemplazar el Deep Work.</p>
+        <div class="highlight-box" style="margin-top:14px;background:var(--accent-coral-dim);border-color:rgba(255,107,107,0.2);color:var(--accent-coral)">
+          <strong>Regla de los 2 minutos</strong>
+          Si algo tarda menos de 2 min, hacelo ahora. No lo anotes, no lo postergues.
+        </div>
+      </div>
+
+      <!-- GTD -->
+      <div class="card">
+        <div class="card-accent-line" style="background:var(--accent-pink)"></div>
+        <div class="card-badge" style="background:var(--accent-pink-dim);color:var(--accent-pink)">Organización</div>
+        <h3>Revisión semanal (GTD)</h3>
+        <p>Cada domingo 15–30 minutos: revisar qué hiciste, qué falta, ajustar el plan. Capturar todas las tareas pendientes. Vaciar la mente al papel.</p>
+        <ul class="method-steps" style="margin-top:14px">
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-pink-dim);color:var(--accent-pink);font-size:10px">1</div>
+            <div class="step-content" style="font-size:13px">Revisá todo lo pendiente del inbox</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-pink-dim);color:var(--accent-pink);font-size:10px">2</div>
+            <div class="step-content" style="font-size:13px">Procesá y priorizá para la semana</div>
+          </li>
+          <li class="method-step">
+            <div class="step-bullet" style="background:var(--accent-pink-dim);color:var(--accent-pink);font-size:10px">3</div>
+            <div class="step-content" style="font-size:13px">Cargá el calendario del lunes</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Second Brain -->
+      <div class="card">
+        <div class="card-accent-line" style="background:#5eead4"></div>
+        <div class="card-badge" style="background:rgba(94,234,212,0.1);color:#5eead4">Gestión del conocimiento</div>
+        <h3>Segundo cerebro (PARA)</h3>
+        <p>Organizar todo el conocimiento en 4 carpetas: <strong style="color:var(--text)">Proyectos</strong> (activos), <strong style="color:var(--text)">Áreas</strong> (responsabilidades), <strong style="color:var(--text)">Recursos</strong> (referencias), <strong style="color:var(--text)">Archivo</strong> (lo terminado). Usar Notion u Obsidian para implementarlo.</p>
+        <div class="highlight-box" style="margin-top:14px;background:rgba(94,234,212,0.08);border-color:rgba(94,234,212,0.2);color:#5eead4">
+          <strong>Tiago Forte — Building a Second Brain</strong>
+          El sistema más completo para no perder ningún concepto aprendido.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 2: APPS -->
+  <section id="apps">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">02 — Herramientas</div>
+        <div class="section-title">Aplicaciones gratuitas<br>esenciales</div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr)">
+
+      <div class="app-card" style="border-color:rgba(74,158,255,0.2)">
+        <div class="app-logo" style="background:rgba(74,158,255,0.1);color:var(--accent-blue)">An</div>
+        <div class="app-info">
+          <h3>Anki</h3>
+          <p>Flashcards con repetición espaciada. Para fórmulas de AM2, comandos de BDD, conceptos de DSI. La app móvil (AnkiDroid) permite repasar en los viajes. <strong style="color:var(--text)">Completamente gratis.</strong></p>
+          <a href="https://apps.ankiweb.net" class="card-link" target="_blank">ankiweb.net →</a>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(255,255,255,0.05);color:var(--text-muted)">No</div>
+        <div class="app-info">
+          <h3>Notion</h3>
+          <p>Base de conocimiento personal. Un espacio por materia: apuntes, fórmulas, ejercicios resueltos, pendientes. Plan estudiantil gratuito con almacenamiento ilimitado.</p>
+          <a href="https://notion.so" class="card-link" target="_blank">notion.so →</a>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(94,234,212,0.1);color:#5eead4">Ob</div>
+        <div class="app-info">
+          <h3>Obsidian</h3>
+          <p>Notas enlazadas tipo "segundo cerebro". Ideal para conectar conceptos entre materias. Más potente que Notion para estudio técnico. <strong style="color:var(--text)">100% offline, gratis para uso personal.</strong></p>
+          <a href="https://obsidian.md" class="card-link" target="_blank">obsidian.md →</a>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(62,207,142,0.1);color:var(--accent-green)">Tg</div>
+        <div class="app-info">
+          <h3>Toggl Track</h3>
+          <p>Medí cuánto tiempo estudiás realmente vs. cuánto creés. Los datos reales evitan la ilusión de productividad. <strong style="color:var(--text)">Gratis ilimitado.</strong> Revelador para la primera semana.</p>
+          <a href="https://toggl.com/track" class="card-link" target="_blank">toggl.com →</a>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(245,166,35,0.1);color:var(--accent-amber)">Fo</div>
+        <div class="app-info">
+          <h3>Forest</h3>
+          <p>Bloquea el teléfono durante el Deep Work: plantás un árbol virtual que muere si salís de la app. Motivación visual simple y efectiva. Versión básica gratis.</p>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(74,158,255,0.08);color:var(--accent-blue)">GC</div>
+        <div class="app-info">
+          <h3>Google Calendar</h3>
+          <p>Cargá la rutina semanal con bloques de colores. Azul = Deep Work, verde = gym, naranja = examen final. Activar notificaciones 5 min antes de cada bloque. <strong style="color:var(--text)">Gratuito.</strong></p>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(255,107,107,0.1);color:var(--accent-coral)">YT</div>
+        <div class="app-info">
+          <h3>YouTube + extensión DF Tube</h3>
+          <p>Instalar "DF YouTube" en el navegador elimina el feed de recomendaciones. Podés entrar a ver un video específico sin caer en el agujero algorítmico. Gratis.</p>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-logo" style="background:rgba(167,139,250,0.1);color:var(--accent-purple)">Wp</div>
+        <div class="app-info">
+          <h3>Wolfram Alpha</h3>
+          <p>Para verificar cada paso de cálculos de AM2, resolver integrales y sistemas de Lagrange. Usalo para entender los pasos que fallaste, no para copiar. Plan gratuito suficiente.</p>
+          <a href="https://wolframalpha.com" class="card-link" target="_blank">wolframalpha.com →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 3: YOUTUBE -->
+  <section id="youtube">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">04 — Recursos</div>
+        <div class="section-title">YouTube</div>
+      </div>
+    </div>
+
+    <div class="card-grid grid-2" style="margin-bottom:20px">
+
+      <div class="yt-card" style="border-color:rgba(74,158,255,0.2)">
+        <div class="yt-tag" style="background:rgba(74,158,255,0.12);color:var(--accent-blue)">Productividad · Top 1</div>
+        <h3>Santago Allamand</h3>
+        <p>Explica el método Deep Work para ser más productivo. Muy práctico, sin relleno.</p>
+        <a href="https://www.youtube.com/@stgoallamand" class="card-link" target="_blank">youtube.com/@stgoallaman →</a>
+      </div>
+
+    </div>
+
+    <div class="card-grid grid-3">
+
+
+      <div class="yt-card">
+        <div class="yt-tag" style="background:rgba(255,107,107,0.12);color:var(--accent-coral)">Programación</div>
+        <h3>Midudev</h3>
+        <p>El mejor canal de JavaScript y TypeScript en español. Proyectos reales, tutoriales de alta calidad, entrevistas con developers. Actualizado constantemente.</p>
+        <a href="https://www.youtube.com/@midudev" class="card-link" target="_blank">youtube.com/@midudev →</a>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-tag" style="background:rgba(255,107,107,0.12);color:var(--accent-coral)">Programación</div>
+        <h3>MoureDev</h3>
+        <p>Python y Swift en español. Retos de programación, roadmaps, proyectos desde cero. Ideal para aprender Python de forma estructurada con proyectos reales.</p>
+        <a href="https://www.youtube.com/@mouredev" class="card-link" target="_blank">youtube.com/@mouredev →</a>
+      </div>
+
+      <div class="yt-card">
+        <div class="yt-tag" style="background:rgba(255,107,107,0.12);color:var(--accent-coral)">Programación</div>
+        <h3>HolaMundo</h3>
+        <p>Conceptos generales de programación y carrera dev en español. Comparativas de lenguajes, explicaciones de fundamentos. Excelente para el contexto inicial de aprender programación.</p>
+        <a href="https://www.youtube.com/@HolaMundoDev" class="card-link" target="_blank">youtube.com/@HolaMundoDev →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 4: PROGRAMACIÓN -->
+  <section id="programacion">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">04 — Roadmap</div>
+        <div class="section-title">Plan para aprender un<br>lenguaje de programación</div>
+      </div>
+    </div>
+
+    <!-- Cuándo -->
+    <div class="highlight-box" style="background:rgba(74,158,255,0.07);border-color:rgba(74,158,255,0.2);color:var(--text);margin-bottom:24px;padding:24px 28px">
+      <strong style="color:var(--accent-blue);font-size:13px;font-family:'DM Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;font-weight:500">Cuándo estudiar</strong>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:12px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent-blue)">Jue 16:30 – 17:30</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Después del bloque de Deep Work de materias</div>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent-blue)">Vie 15:00 – 16:00</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Después del repaso semanal</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;font-size:13.5px;color:var(--text-muted);line-height:1.7">2 horas semanales consistentes = lenguaje completo en <strong style="color:var(--text)">4–6 meses</strong>. Más vale esto que 10 horas en un fin de semana y abandonar.</div>
+    </div>
+
+    <!-- Lenguajes -->
+    <div style="margin-bottom:24px">
+      <p style="font-size:12px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px">Elegí tu lenguaje</p>
+      <div class="lang-grid">
+        <div class="lang-option recommended">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div class="lang-name" style="color:var(--accent-green)">Python</div>
+            <div class="card-badge" style="background:var(--accent-green-dim);color:var(--accent-green);margin:0">Recomendado</div>
+          </div>
+          <p>El más versátil. Complementa AM2 (SymPy para cálculo simbólico), BDD (Pandas para datos) y DSI (automatización). Curva suave al principio, muy poderoso después. Canal referencia: MoureDev.</p>
+        </div>
+        <div class="lang-option">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div class="lang-name" style="color:var(--accent-amber)">JavaScript</div>
+            <div class="card-badge" style="background:var(--accent-amber-dim);color:var(--accent-amber);margin:0">Alta demanda laboral</div>
+          </div>
+          <p>Si tu carrera tiene orientación web o querés salida laboral rápida. Empieza con JS vanilla, luego TypeScript. El más demandado en el mercado argentino actualmente. Canal: Midudev.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roadmap fases -->
+    <div class="roadmap">
+      <div class="roadmap-header">
+        <div>
+          <p style="font-size:12px;color:var(--text-dim);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">Roadmap de 6 meses</p>
+          <p style="font-size:16px;font-weight:500">2 horas por semana · Progresión gradual</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent-purple)">~50h</div>
+          <div style="font-size:12px;color:var(--text-dim)">horas totales</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:60px 1fr">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:32px 0">
+          <div class="timeline-dot" style="background:var(--accent-blue)"></div>
+          <div class="timeline-line"></div>
+          <div class="timeline-dot" style="background:var(--accent-green)"></div>
+          <div class="timeline-line"></div>
+          <div class="timeline-dot" style="background:var(--accent-amber)"></div>
+          <div class="timeline-line"></div>
+          <div class="timeline-dot" style="background:var(--accent-purple)"></div>
+        </div>
+        <div>
+
+          <div class="roadmap-content">
+            <div class="phase-num">Semanas 1 – 4 · Fase 1</div>
+            <h3 style="color:var(--accent-blue)">Fundamentos del lenguaje</h3>
+            <p>Sintaxis, variables, tipos de datos, condicionales, bucles, funciones. Usar freeCodeCamp en español o CS50P (Python, subtitulado). Un ejercicio por sesión en un editor simple.</p>
+            <div class="tag-row">
+              <div class="tag">Variables y tipos</div>
+              <div class="tag">Funciones</div>
+              <div class="tag">Bucles</div>
+              <div class="tag">freeCodeCamp</div>
+              <div class="tag">CS50P</div>
+            </div>
+          </div>
+
+          <div class="roadmap-content">
+            <div class="phase-num">Semanas 5 – 8 · Fase 2</div>
+            <h3 style="color:var(--accent-green)">Estructuras de datos y OOP</h3>
+            <p>Listas, diccionarios, conjuntos. Clases y objetos básicos. Módulos. Hacer 1 ejercicio en LeetCode (nivel fácil) o Codewars por sesión para consolidar la lógica.</p>
+            <div class="tag-row">
+              <div class="tag">Estructuras de datos</div>
+              <div class="tag">Clases y objetos</div>
+              <div class="tag">LeetCode Easy</div>
+              <div class="tag">Codewars</div>
+            </div>
+          </div>
+
+          <div class="roadmap-content">
+            <div class="phase-num">Semanas 9 – 16 · Fase 3</div>
+            <h3 style="color:var(--accent-amber)">Mini-proyecto propio</h3>
+            <p>Nada enseña más que construir algo real. Un bot de Telegram, un script de automatización, una API simple, un scraper. El proyecto lo elegís vos según tu interés.</p>
+            <div class="tag-row">
+              <div class="tag">Proyecto real</div>
+              <div class="tag">APIs</div>
+              <div class="tag">GitHub</div>
+              <div class="tag">The Odin Project</div>
+            </div>
+            <a href="https://www.theodinproject.com" class="card-link" target="_blank" style="margin-top:12px">theodinproject.com →</a>
+          </div>
+
+          <div class="roadmap-content">
+            <div class="phase-num">Semanas 17 – 24 · Fase 4</div>
+            <h3 style="color:var(--accent-purple)">Especialización y portafolio</h3>
+            <p>Elegí una rama: data science (Python + Pandas), backend (FastAPI / Node.js), automatización. Subí 2–3 proyectos a GitHub. A esta altura ya podés aplicar a primeros trabajos o freelance.</p>
+            <div class="tag-row">
+              <div class="tag">Especialización</div>
+              <div class="tag">GitHub portfolio</div>
+              <div class="tag">Primer empleo</div>
+              <div class="tag">Freelance</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECCIÓN 5: SUPERVIVENCIA MARTES -->
+  <section id="supervivencia">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">05 — Logística</div>
+        <div class="section-title">Supervivencia<br>para los martes</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim)">El día más pesado</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent-coral)">08:00 → 00:30</div>
+      </div>
+    </div>
+
+    <div class="survival-grid">
+
+      <div class="survival-item">
+        <div class="survival-icon" style="background:var(--accent-amber-dim)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#f5a623" stroke-width="1.2"/><path d="M9 5.5v4l2.5 2.5" stroke="#f5a623" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h4>Comer antes de las 19:00</h4>
+          <p>No llegar a BDD con hambre. Almuerzo abundante al mediodía, snack antes de las 18:00. Llevá fruta o mix de nueces en el bolso. El cerebro sin glucosa no retiene nada.</p>
+        </div>
+      </div>
+
+      <div class="survival-item">
+        <div class="survival-icon" style="background:rgba(74,158,255,0.12)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M9 4l5 5-5 5" stroke="#4a9eff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h4>Viaje de ida (mañana)</h4>
+          <p>Usá el transporte para repasar AM2: leer apuntes en papel, escuchar un resumen grabado o usar Anki. No estudies material nuevo — solo consolida lo ya visto.</p>
+        </div>
+      </div>
+
+      <div class="survival-item">
+        <div class="survival-icon" style="background:var(--accent-coral-dim)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v6" stroke="#ff6b6b" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="13.5" r="1.2" fill="#ff6b6b"/></svg>
+        </div>
+        <div>
+          <h4>Regla de las 14:00</h4>
+          <p>Si a las 14:00 estás drenado entre AM2 y BDD, el bloque de 12:30 cambia a lectura pasiva. Forzar Deep Work con el cerebro agotado produce retención cero.</p>
+        </div>
+      </div>
+
+      <div class="survival-item">
+        <div class="survival-icon" style="background:rgba(62,207,142,0.12)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 14.5c3.04 0 5.5-2.46 5.5-5.5S12.04 3.5 9 3.5 3.5 5.96 3.5 9s2.46 5.5 5.5 5.5z" stroke="#3ecf8e" stroke-width="1.2"/><path d="M6.5 9l2 2 3-3" stroke="#3ecf8e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h4>Viaje de vuelta (23:00–00:30)</h4>
+          <p>Nada de estudio. Podcast pasivo o música. El cerebro ya llegó al límite — el viaje de vuelta es de descompresión, no de repaso. Lo que aprendiste se consolida mientras dormís.</p>
+        </div>
+      </div>
+
+      <div class="survival-item">
+        <div class="survival-icon" style="background:var(--accent-purple-dim)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="4" width="12" height="10" rx="2" stroke="#a78bfa" stroke-width="1.2"/><path d="M7 4V3M11 4V3" stroke="#a78bfa" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h4>Miércoles post-martes</h4>
+          <p>Si llegás a las 00:30, no pongas alarma antes de las 07:30. Priorizar el sueño ante el gym. Mejor rendimiento cognitivo el resto del día vale más que una sesión de gym en modo zombie.</p>
+        </div>
+      </div>
+
+      <div class="survival-item">
+        <div class="survival-icon" style="background:rgba(255,255,255,0.04)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="5" width="12" height="9" rx="2" stroke="#7a7670" stroke-width="1.2"/><path d="M6 5V4a3 3 0 016 0v1" stroke="#7a7670" stroke-width="1.2"/></svg>
+        </div>
+        <div>
+          <h4>Kit de supervivencia en la mochila</h4>
+          <p>Auriculares (obligatorio), botella de agua (500ml+), snack saludable, apuntes en papel de la materia del día, power bank cargado, remera extra si hace calor en el viaje.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Timeline del martes -->
+    <div style="margin-top:24px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px">
+      <p style="font-size:12px;color:var(--text-dim);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px">Timeline del martes — gestión de energía</p>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+        <div style="background:rgba(74,158,255,0.08);border:1px solid rgba(74,158,255,0.15);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-blue)">08:00</div>
+          <div style="font-size:12px;font-weight:500;margin-top:4px;color:var(--text)">AM2</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Cursado</div>
+        </div>
+        <div style="background:rgba(62,207,142,0.08);border:1px solid rgba(62,207,142,0.15);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-green)">09:30</div>
+          <div style="font-size:12px;font-weight:500;margin-top:4px;color:var(--text)">DW</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">BDD o DSI</div>
+        </div>
+        <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.15);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-amber)">13:00</div>
+          <div style="font-size:12px;font-weight:500;margin-top:4px;color:var(--text)">Almuerzo + Siesta</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Sin estudiar</div>
+        </div>
+        <div style="background:rgba(62,207,142,0.08);border:1px solid rgba(62,207,142,0.15);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-green)">14:00</div>
+          <div style="font-size:12px;font-weight:500;margin-top:4px;color:var(--text)">DW</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">AM2 Repaso</div>
+        </div>
+        <div style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.15);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-purple)">19:55</div>
+          <div style="font-size:12px;font-weight:500;margin-top:4px;color:var(--text)">BDD</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Cursado</div>
+        </div>
+        <div style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.15);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent-coral)">00:30</div>
+          <div style="font-size:12px;font-weight:500;margin-top:4px;color:var(--text)">Casa</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">A dormir</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</main>
+
+<footer>
+  <span>Sistema de estudio · Deep Work Method · 2026 - UTN</span>
+</footer>
+
+</body>
+</html>
