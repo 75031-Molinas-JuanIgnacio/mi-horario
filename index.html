@@ -235,9 +235,47 @@
   .grid-2 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
+  @media (max-width: 1024px) {
+    main { padding: 0 1.5rem 80px; }
+    .hero { padding: 120px 1.5rem 80px; }
+    .hero-pills { justify-content: center; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .section-title { font-size: 26px; }
+    .card-grid.grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .card-grid.grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .method-card { grid-template-columns: 1fr; padding: 28px; }
+    .method-number { position: static; opacity: 0.08; margin-bottom: 16px; }
+    .app-card { flex-direction: column; }
+    .roadmap-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .roadmap-phase { grid-template-columns: 1fr; }
+    .roadmap-timeline { flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); padding: 24px; gap: 12px; }
+    .lang-grid, .survival-grid { grid-template-columns: 1fr 1fr; }
+    .divider { margin: 54px 0; }
+  }
+
   @media (max-width: 768px) {
+    nav { padding: 0 1rem; min-height: 56px; }
+    .hero { padding: 100px 1rem 60px; }
+    .hero h1 { font-size: clamp(30px, 10vw, 48px); }
+    .hero p { max-width: 100%; margin: 0 auto 28px; padding: 0 0.5rem; }
+    .hero-pills { gap: 8px; }
+    main { padding: 0 1rem 80px; }
+    .section-header { align-items: flex-start; padding-bottom: 12px; }
+    .section-title { font-size: 24px; }
+    .card { padding: 20px; }
+    .method-card { grid-template-columns: 1fr; padding: 24px; }
+    .method-number { position: static; top: auto; right: auto; margin-bottom: 14px; }
     .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    nav .nav-links { display: none; }
+    .app-card { flex-direction: column; }
+    .app-logo { width: 40px; height: 40px; }
+    .roadmap-header { flex-direction: column; align-items: flex-start; gap: 14px; padding: 24px; }
+    .roadmap-timeline { flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); padding: 20px; }
+    .roadmap-content { padding: 24px; }
+    .lang-grid, .survival-grid { grid-template-columns: 1fr; }
+    .divider { margin: 48px 0; }
+    #semana > div[style*="grid-template-columns:repeat(7"] { grid-template-columns: 1fr !important; }
+    #semana > div[style*="grid-template-columns:repeat(5"] { grid-template-columns: repeat(2, 1fr) !important; }
+    #semana > div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
   }
 
   .card {
@@ -1092,6 +1130,7 @@
   <div class="divider"></div>
 
   <!-- SECCIÓN 1: MÉTODOS -->
+  <section id="metodos">
     <div class="section-header">
       <div>
         <div class="section-eyebrow">01 — Técnicas</div>
